@@ -107,11 +107,6 @@ void hapusEnter(char teks[]) {
     }
 }
 
-
-
-
-
-
 // Bagian Nabiel
 // Buat nyari nasabah pake ID, jangan diubah dulu
 int cariIndexNasabahById(Nasabah daftarNasabah[], int jumlahNasabah, int idDicari) {
@@ -206,12 +201,6 @@ printf("Nama : %s\n", daftarNasabah[index].nama);
 printf("Saldo : Rp %.2f\n", daftarNasabah[index].saldo);
 }
 }
-
-
-
-
-
-
 
 // Bagian Priji
 void transaksi(Nasabah daftarNasabah[], int jumlahNasabah) {
@@ -329,9 +318,7 @@ void muatData(Nasabah daftarNasabah[], int *jumlahNasabah) {
             printf("Peringatan: data di file melebihi kapasitas. Sisanya diabaikan.\n");
             break;
         }
-
         Nasabah n;
-
       
         int hasil = sscanf(baris, "%d,%49[^,],%lf", &n.id, n.nama, &n.saldo);
 
