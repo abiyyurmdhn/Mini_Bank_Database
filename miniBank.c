@@ -110,4 +110,142 @@ void hapusEnter(char teks[]) {
 // Bagian Nabil
 
 
+
+
+
+
+
 // Bagian Priji
+void transaksi(Nasabah daftarNasabah[], int jumlahNasabah) {
+    if (jumlahNasabah == 0) {
+        printf("Belum ada data nasabah.\n");
+        return;
+    }
+
+    int id;
+    printf("Masukkan ID nasabah: ");
+    scanf("%d", &id);
+    bersihkanBuffer();
+
+    int index = cariIndexNasabahById(daftarNasabah, jumlahNasabah, id);
+    if (index == -1) {
+        printf("Nasabah dengan ID %d tidak ditemukan.\n", id);
+        return;
+    }
+
+    printf("\nNasabah: %s (Saldo: Rp %.2f)\n", daftarNasabah[index].nama, daftarNasabah[index].saldo);
+    printf("1. Setor Uang\n");
+    printf("2. Tarik Uang\n");
+    printf("Pilih transaksi: ");
+
+    int pilihTransaksi;
+    scanf("%d", &pilihTransaksi);
+    bersihkanBuffer();
+
+    double jumlah;
+    printf("Masukkan jumlah uang: ");
+    scanf("%lf", &jumlah);
+    bersihkanBuffer();
+
+    if (jumlah <= 0) {
+        printf("Jumlah uang harus lebih dari 0.\n");
+        return;
+    }
+
+    if (pilihTransaksi == 1) {
+        // Setor
+        daftarNasabah[index].saldo += jumlah;
+        printf("Setor berhasil.\n");
+        printf("Saldo sekarang: Rp %.2f\n", daftarNasabah[index].saldo);
+
+    } else if (pilihTransaksi == 2) {
+        // Tarik
+        if (jumlah > daftarNasabah[index].saldo) {
+            printf("Saldo tidak cukup. Transaksi dibatalkan.\n");
+            printf("Saldo sekarang: Rp %.2f\n", daftarNasabah[index].saldo);
+            return;
+        }
+        daftarNasabah[index].saldo -= jumlah;
+        printf("Tarik berhasil.\n");
+        printf("Saldo sekarang: Rp %.2f\n", daftarNasabah[index].saldo);
+
+    } else {
+        printf("Pilihan transaksi tidak valid.\n");
+    }
+}
+void urutkanSaldo(Nasabah daftarNasabah[], int jumlahNasabah) {
+    if (jumlahNasabah < 2) {
+        printf("Data nasabah kurang untuk diurutkan.\n");
+        return;
+    }
+
+    Nasabah temp;
+
+    // Bubble Sort
+    for (int i = 0; i < jumlahNasabah - 1; i++) {
+        for (int j = 0; j < jumlahNasabah - i - 1; j++) {
+            if (daftarNasabah[j].saldo > daftarNasabah[j + 1].saldo) {
+                // Tukar data
+                temp = daftarNasabah[j];
+                daftarNasabah[j] = daftarNasabah[j + 1];
+                daftarNasabah[j + 1] = temp;
+            }
+        }
+    }
+
+    printf("Data nasabah berhasil diurutkan berdasarkan saldo (kecil ke besar).\n");
+}
+
+void simpanData(Nasabah daftarNasabah[], int jumlahNasabah) {
+    FILE *fp = fopen(NAMA_FILE, "w"); // "w" = overwrite file
+    if (fp == NULL) {
+        printf("Gagal membuka file untuk menyimpan.\n");
+        return;
+    }
+
+    // Ini buat masukin ke file CSV: id,nama,saldo
+    for (int i = 0; i < jumlahNasabah; i++) {
+        fprintf(fp, "%d,%s,%.2f\n",
+                daftarNasabah[i].id,
+                daftarNasabah[i].nama,
+                daftarNasabah[i].saldo);
+    }
+
+    fclose(fp);
+    printf("Data berhasil disimpan ke file: %s\n", NAMA_FILE);
+}
+
+void muatData(Nasabah daftarNasabah[], int *jumlahNasabah) {
+    FILE *fp = fopen(NAMA_FILE, "r"); // "r" = read file
+    if (fp == NULL) {
+        printf("File belum ada / tidak bisa dibuka: %s\n", NAMA_FILE);
+        return;
+    }
+
+    // Buat reset data yee
+    *jumlahNasabah = 0;
+
+    char baris[200];
+    while (fgets(baris, sizeof(baris), fp) != NULL) {
+        if (*jumlahNasabah >= MAKS_NASABAH) {
+            printf("Peringatan: data di file melebihi kapasitas. Sisanya diabaikan.\n");
+            break;
+        }
+
+        Nasabah n;
+
+        // Parsing CSV sederhana: id,nama,saldo
+        // %49[^,] artinya: ambil sampai ketemu koma, maksimal 49 char
+        int hasil = sscanf(baris, "%d,%49[^,],%lf", &n.id, n.nama, &n.saldo);
+
+        if (hasil == 3) {
+            daftarNasabah[*jumlahNasabah] = n;
+            (*jumlahNasabah)++;
+        }
+        // Kalau format baris rusak, kita skip aja biar program aman
+    }
+
+    fclose(fp);
+    printf("Data berhasil dimuat. Total nasabah: %d\n", *jumlahNasabah);
+}
+
