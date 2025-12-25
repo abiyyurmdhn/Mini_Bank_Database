@@ -234,8 +234,7 @@ void muatData(Nasabah daftarNasabah[], int *jumlahNasabah) {
 
         Nasabah n;
 
-        // Parsing CSV sederhana: id,nama,saldo
-        // %49[^,] artinya: ambil sampai ketemu koma, maksimal 49 char
+      
         int hasil = sscanf(baris, "%d,%49[^,],%lf", &n.id, n.nama, &n.saldo);
 
         if (hasil == 3) {
