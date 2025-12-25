@@ -107,7 +107,100 @@ void hapusEnter(char teks[]) {
     }
 }
 
-// Bagian Nabil
+// Bagian Nabiel
+// Buat nyari nasabah pake ID, jangan diubah dulu
+int cariIndexNasabahById(Nasabah daftarNasabah[], int jumlahNasabah, int idDicari) {
+for (int i = 0; i < jumlahNasabah; i++) {
+if (daftarNasabah[i].id == idDicari) {
+return i; // ini kalo ketemu
+}
+}
+return -1; // kalo misalnya ga ketemu
+}
+
+void tambahNasabah(Nasabah daftarNasabah[], int *jumlahNasabah) {
+if (*jumlahNasabah >= MAKS_NASABAH) {
+printf("Data penuh. Tidak bisa tambah nasabah lagi.\n");
+return;
+}
+
+Nasabah n;
+
+// Input ID
+printf("Masukkan No. Rekening: ");
+scanf("%d", &n.id);
+bersihkanBuffer();
+
+if (cariIndexNasabahById(daftarNasabah, *jumlahNasabah, n.id) != -1) {
+printf("ID sudah terpakai. Gagal menambahkan nasabah.\n");
+return;
+}
+
+// Input nama
+printf("Masukkan Nama: ");
+fgets(n.nama, PANJANG_NAMA, stdin);
+hapusEnter(n.nama);
+
+// Input saldo awal
+printf("Masukkan Saldo Awal: ");
+scanf("%lf", &n.saldo);
+bersihkanBuffer();
+
+if (n.saldo < 0) {
+printf("Saldo awal tidak boleh negatif.\n");
+return;
+}
+
+// Simpan ke array
+daftarNasabah[*jumlahNasabah] = n;
+(*jumlahNasabah)++;
+
+printf("Nasabah berhasil ditambahkan!\n");
+}
+
+void tampilSemuaNasabah(Nasabah daftarNasabah[], int jumlahNasabah) {
+if (jumlahNasabah == 0) {
+printf("Belum ada data nasabah.\n");
+return;
+}
+
+printf("\n===== DAFTAR NASABAH =====\n");
+printf("%-10s | %-20s | %-15s\n", "ID", "Nama", "Saldo");
+printf("----------------------------------------------------\n");
+
+for (int i = 0; i < jumlahNasabah; i++) {
+printf("%-10d | %-20s | Rp %-12.2f\n",
+daftarNasabah[i].id,
+daftarNasabah[i].nama,
+daftarNasabah[i].saldo);
+}
+
+printf("----------------------------------------------------\n");
+printf("Total Nasabah: %d\n", jumlahNasabah);
+}
+
+void cariNasabah(Nasabah daftarNasabah[], int jumlahNasabah) {
+if (jumlahNasabah == 0) {
+printf("Belum ada data nasabah untuk dicari.\n");
+return;
+}
+
+int idDicari;
+printf("Masukkan ID yang ingin dicari: ");
+scanf("%d", &idDicari);
+bersihkanBuffer();
+
+int index = cariIndexNasabahById(daftarNasabah, jumlahNasabah, idDicari);
+
+if (index == -1) {
+printf("Nasabah dengan ID %d tidak ditemukan.\n", idDicari);
+} else {
+printf("\n=== DATA NASABAH DITEMUKAN ===\n");
+printf("ID : %d\n", daftarNasabah[index].id);
+printf("Nama : %s\n", daftarNasabah[index].nama);
+printf("Saldo : Rp %.2f\n", daftarNasabah[index].saldo);
+}
+}
 
 
 
